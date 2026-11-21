@@ -1,0 +1,125 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="InkBrush" Color="#183B50" />
+    <SolidColorBrush x:Key="MutedBrush" Color="#718896" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#126F7C" />
+    <SolidColorBrush x:Key="LineBrush" Color="#D8E5EC" />
+    <SolidColorBrush x:Key="CanvasBrush" Color="#F3F7FA" />
+    <Style TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+    </Style>
+    <Style TargetType="Button">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="14,9" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="MinHeight" Value="38" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.82" /></Trigger>
+                        <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.65" /></Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="#16818A" /><Setter TargetName="Surface" Property="BorderThickness" Value="2" /></Trigger>
+                        <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Surface" Property="Opacity" Value="0.4" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style x:Key="QuietButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+        <Setter Property="Padding" Value="10,6" />
+    </Style>
+    <Style TargetType="TextBox">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="BorderBrush" Value="#CBDEE6" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="11,9" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Style.Triggers>
+            <Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" /></Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ComboBox">
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="Background" Value="White" />
+        <Setter Property="BorderBrush" Value="#CBDEE6" />
+        <Setter Property="Padding" Value="7,3" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="MaxDropDownHeight" Value="330" />
+    </Style>
+    <Style TargetType="ContextMenu">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="BorderBrush" Value="#CBDDE7" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="FontFamily" Value="Yu Gothic UI, Segoe UI" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="4" />
+    </Style>
+    <Style TargetType="ToolTip">
+        <Setter Property="Background" Value="#FAFDFE" />
+        <Setter Property="BorderBrush" Value="#CBDEE6" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="Padding" Value="10,8" />
+    </Style>
+    <Style TargetType="PasswordBox">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="BorderBrush" Value="#CFD9E5" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="11,9" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+    <Style x:Key="FieldLabel" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Margin" Value="0,0,0,7" />
+    </Style>
+    <Style x:Key="FieldHelp" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="LineHeight" Value="19" />
+        <Setter Property="Margin" Value="0,7,0,0" />
+    </Style>
+    <Style x:Key="NavigationButton" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+        <Setter Property="Padding" Value="14,13" />
+        <Setter Property="Margin" Value="12,3" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="NavSurface" Background="Transparent" CornerRadius="6" Padding="{TemplateBinding Padding}" BorderBrush="Transparent" BorderThickness="1">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True"><Setter TargetName="NavSurface" Property="Background" Value="#E6EFFC" /><Setter Property="Foreground" Value="#2367C9" /><Setter Property="FontWeight" Value="SemiBold" /></Trigger>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="NavSurface" Property="BorderBrush" Value="#D7E1EF" /></Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="NavSurface" Property="BorderBrush" Value="#2367C9" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

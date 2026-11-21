@@ -1,0 +1,8 @@
+ClipBridge
+Copyright (c) 2026 gomamonaka. All rights reserved.
+
+This is private software. No public license to redistribute this project's
+source code or application is granted by this repository.
+
+Third-party components are governed by their respective license terms.
+The application distribution includes those notices in the Notices folder.

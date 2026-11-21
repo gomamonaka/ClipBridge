@@ -1,0 +1,168 @@
+<Window x:Class="ClipBridge.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ClipBridge" Width="380" Height="600" MinWidth="320" MinHeight="260"
+        WindowStyle="None" ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" Topmost="True"
+        WindowStartupLocation="Manual" AllowsTransparency="True" Background="Transparent" FontFamily="Yu Gothic UI, Segoe UI"
+        FontSize="12" Foreground="#35483F" UseLayoutRounding="True" SnapsToDevicePixels="True"
+        PreviewKeyDown="OnWindowKeyDown" Closing="OnWindowClosing" Deactivated="OnWindowDeactivated">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="Themes/Controls.xaml" /></ResourceDictionary.MergedDictionaries>
+            <!-- Translucency belongs to the surfaces, leaving text fully opaque. -->
+            <SolidColorBrush x:Key="PopupCanvas" Color="#EDE6F4E9" />
+            <SolidColorBrush x:Key="PopupLine" Color="#B59DBBA8" />
+            <SolidColorBrush x:Key="PopupHover" Color="#70CAE7D3" />
+            <SolidColorBrush x:Key="PopupSelection" Color="#DDF7D9B6" />
+            <SolidColorBrush x:Key="PopupInk" Color="#35483F" />
+            <SolidColorBrush x:Key="PopupMuted" Color="#627A6A" />
+            <Style x:Key="CompactButton" TargetType="Button" BasedOn="{StaticResource QuietButton}">
+                <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="3" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" /></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="{StaticResource PopupHover}" /></Trigger><Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="#719A80" /></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter><Setter Property="MinHeight" Value="20" /><Setter Property="Padding" Value="5,1" /><Setter Property="FontSize" Value="11" />
+            </Style>
+            <Style x:Key="PopupTab" TargetType="RadioButton">
+                <Setter Property="Foreground" Value="{StaticResource PopupMuted}" /><Setter Property="Padding" Value="12,3" /><Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="TabSurface" Background="Transparent" BorderBrush="Transparent" BorderThickness="0,0,0,1" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True"><Setter Property="Foreground" Value="{StaticResource PopupInk}" /><Setter Property="FontWeight" Value="SemiBold" /><Setter TargetName="TabSurface" Property="BorderBrush" Value="#83A88F" /><Setter TargetName="TabSurface" Property="Background" Value="#A6CCE8D5" /></Trigger>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="TabSurface" Property="Background" Value="{StaticResource PopupHover}" /></Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="TabSurface" Property="BorderBrush" Value="#83A88F" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate></Setter.Value></Setter>
+            </Style>
+            <Style x:Key="PopupGroupItem" TargetType="ComboBoxItem">
+                <Setter Property="Foreground" Value="{StaticResource PopupInk}" />
+                <Setter Property="Padding" Value="5,3" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBoxItem">
+                    <Border x:Name="GroupItemSurface" Background="Transparent" CornerRadius="2" Padding="{TemplateBinding Padding}"><ContentPresenter /></Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True"><Setter TargetName="GroupItemSurface" Property="Background" Value="{StaticResource PopupSelection}" /></Trigger>
+                        <Trigger Property="IsHighlighted" Value="True"><Setter TargetName="GroupItemSurface" Property="Background" Value="{StaticResource PopupHover}" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate></Setter.Value></Setter>
+            </Style>
+            <Style x:Key="PopupGroupFilter" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                <Setter Property="Foreground" Value="{StaticResource PopupInk}" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="{StaticResource PopupLine}" />
+                <Setter Property="ItemContainerStyle" Value="{StaticResource PopupGroupItem}" />
+                <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <ToggleButton x:Name="GroupToggle" Focusable="False" ClickMode="Press" BorderBrush="Transparent" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                            <ToggleButton.Template><ControlTemplate TargetType="ToggleButton">
+                                <Border x:Name="GroupSurface" Background="Transparent" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="3">
+                                    <Path Data="M 0 0 L 3 3 L 6 0" Stroke="{StaticResource PopupMuted}" StrokeThickness="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="GroupSurface" Property="Background" Value="{StaticResource PopupHover}" /></Trigger>
+                                    <Trigger Property="IsChecked" Value="True"><Setter TargetName="GroupSurface" Property="BorderBrush" Value="{StaticResource PopupLine}" /></Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate></ToggleButton.Template>
+                        </ToggleButton>
+                        <ContentPresenter Margin="4,0,19,0" VerticalAlignment="Center" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" />
+                        <Popup x:Name="PART_Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="None">
+                            <Border Background="#F0F8F2" BorderBrush="{StaticResource PopupLine}" BorderThickness="1" CornerRadius="4" MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}" Padding="2">
+                                <ScrollViewer MaxHeight="{TemplateBinding MaxDropDownHeight}" CanContentScroll="True"><ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" /></ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="GroupToggle" Property="BorderBrush" Value="#719A80" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate></Setter.Value></Setter>
+            </Style>
+            <Style TargetType="ListBoxItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Padding" Value="0" /><Setter Property="Height" Value="20" /><Setter Property="Background" Value="Transparent" />
+                <Setter Property="IsEnabled" Value="{Binding IsAvailable}" />
+                <Setter Property="BorderBrush" Value="Transparent" /><Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="ItemBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"><ContentPresenter VerticalAlignment="Center" /></Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource PopupHover}" /></Trigger>
+                        <Trigger Property="IsSelected" Value="True"><Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource PopupSelection}" /><Setter TargetName="ItemBorder" Property="BorderBrush" Value="#83A88F" /><Setter Property="Foreground" Value="{StaticResource PopupInk}" /></Trigger>
+                        <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate></Setter.Value></Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Border x:Name="PopupSurface" BorderBrush="{StaticResource PopupLine}" BorderThickness="1" Background="{StaticResource PopupCanvas}" CornerRadius="8" SizeChanged="OnPopupSurfaceSizeChanged">
+        <Border.Clip><RectangleGeometry x:Name="PopupOutline" RadiusX="8" RadiusY="8" /></Border.Clip>
+        <Grid>
+            <Grid.RowDefinitions><RowDefinition Height="24" /><RowDefinition Height="20" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition x:Name="PreviewRow" Height="0" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+            <Grid Background="#50B5DCC5"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <RadioButton x:Name="HistoryNav" Content="クリップボード" Style="{StaticResource PopupTab}" GroupName="Section" Checked="OnHistoryNavigation" MouseEnter="OnSectionHover" AutomationProperties.Name="クリップボード履歴を表示" />
+                <RadioButton x:Name="SnippetsNav" Grid.Column="1" Content="定型文" Style="{StaticResource PopupTab}" GroupName="Section" Checked="OnSnippetsNavigation" MouseEnter="OnSectionHover" AutomationProperties.Name="定型文を表示" />
+            </Grid>
+            <Grid Grid.Row="1" Background="Transparent" MouseLeftButtonDown="OnTitleMouseDown" Margin="7,0,2,0"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                <Grid Width="120"><TextBlock x:Name="AppCaption" Text="ClipBridge" FontFamily="Segoe UI" FontSize="10" Foreground="{StaticResource PopupMuted}" VerticalAlignment="Center" />
+                    <Border x:Name="GroupBar" Visibility="Collapsed" Background="Transparent">
+                        <ComboBox x:Name="GroupFilter" Style="{StaticResource PopupGroupFilter}" Height="20" MinHeight="20" MaxHeight="20" FontSize="10" Padding="3,0" SelectionChanged="OnGroupChanged" AutomationProperties.Name="定型文グループ" ToolTip="定型文グループを選択。管理は右上メニューから開けます。" />
+                    </Border>
+                </Grid>
+                <TextBlock x:Name="PageIndicator" Grid.Column="1" FontSize="10" Foreground="{StaticResource PopupMuted}" TextTrimming="CharacterEllipsis" TextAlignment="Right" VerticalAlignment="Center" Margin="4,0,4,0" />
+                            <Border x:Name="PendingHistoryBar" Grid.Column="2" Visibility="Collapsed" Background="{StaticResource PopupHover}" BorderBrush="{StaticResource PopupLine}" BorderThickness="0">
+                <Grid><Button x:Name="PendingHistoryButton" Style="{StaticResource CompactButton}" HorizontalAlignment="Stretch" Click="OnRefreshHistory" AutomationProperties.Name="新しい履歴を反映" />
+                <StackPanel Visibility="Collapsed"><Button x:Name="PreviousPageButton" Click="OnPreviousPage" /><Button x:Name="NextPageButton" Click="OnNextPage" /></StackPanel></Grid>
+            </Border>
+<Button x:Name="ToolsButton" Grid.Column="3" Content="⋯" Width="22" FontSize="14" Style="{StaticResource CompactButton}" Click="OnTools" ToolTip="検索・登録・管理" AutomationProperties.Name="管理メニューを開く">
+<Button.ContextMenu><ContextMenu x:Name="ToolsMenu" Opened="OnContextMenuOpened" Closed="OnContextMenuClosed">
+                        <MenuItem Header="検索…" InputGestureText="Ctrl+Shift+F" Click="OnSearch" /><MenuItem Header="定型文を登録…" InputGestureText="Ctrl+Shift+N" Click="OnAddSnippet" /><MenuItem x:Name="UseSelectionMenu" Header="選択した項目を取り出す" InputGestureText="Enter" Click="OnCopy" /><MenuItem Header="コピーのみ" InputGestureText="Ctrl+C" Click="OnCopyOnly" /><Separator /><MenuItem x:Name="SharingMenuItem" Header="自動共有を一時停止／再開" Click="OnPause" /><Separator /><MenuItem Header="グループ管理・並び替え…" Click="OnManageGroups" />
+                        <Separator />
+                        <MenuItem Header="定型文を CSV から取り込む…" Click="OnImportCsv" />
+                        <MenuItem Header="定型文を CSV に書き出す…" Click="OnExportCsv" />
+                        <MenuItem Header="Clibor から移行…" Click="OnImportClibor" />
+                        <Separator />
+                        <MenuItem Header="バックアップを作成…" Click="OnBackup" />
+                        <MenuItem Header="バックアップから復元…" Click="OnRestore" />
+                        <Separator /><MenuItem Header="ページ切り替え設定…" Click="OnPagingSettings" />
+                        <Separator /><MenuItem Header="接続・操作設定…" Click="OnSettings" />
+                    </ContextMenu></Button.ContextMenu>
+                </Button>
+                <StackPanel Visibility="Collapsed"><TextBlock x:Name="ShortcutHint" /><TextBlock x:Name="ResultCount" /><Button x:Name="AddSnippetButton" Click="OnAddSnippet" /></StackPanel>
+            </Grid>
+            <Grid x:Name="SearchBar" Grid.Row="3" Height="28" Margin="9,3,9,3" Visibility="Collapsed">
+                <TextBox x:Name="SearchInput" Background="#A6FFFFFF" BorderBrush="{StaticResource PopupLine}" Foreground="{StaticResource PopupInk}" TextChanged="OnSearchChanged" Padding="9,6,32,6" FontSize="12" AutomationProperties.Name="履歴と定型文を検索" />
+                <Button Content="×" Style="{StaticResource CompactButton}" HorizontalAlignment="Right" Width="28" Click="OnCloseSearch" ToolTip="検索を閉じる" AutomationProperties.Name="検索を閉じる" />
+            </Grid>
+            <Grid Grid.Row="4" Background="Transparent">
+                <ListBox x:Name="ItemsList" Background="Transparent" BorderBrush="{StaticResource PopupLine}" BorderThickness="0,1,0,1" Padding="0,2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                         VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" ScrollViewer.CanContentScroll="True"
+                         SelectionChanged="OnSelectionChanged" PreviewMouseWheel="OnListMouseWheel" PreviewMouseLeftButtonUp="OnItemClick" PreviewMouseRightButtonDown="OnItemRightClick" ContextMenuOpening="OnContextMenuOpening" AutomationProperties.Name="クリップボード項目一覧">
+                    <ListBox.ContextMenu><ContextMenu x:Name="ItemMenu" Opened="OnContextMenuOpened" Closed="OnContextMenuClosed">
+                        <MenuItem x:Name="SaveSnippetMenu" Header="定型文に登録…" Click="OnSaveHistoryAsSnippet" />
+                        <MenuItem x:Name="EditSnippetMenu" Header="定型文を編集…" InputGestureText="F2" Click="OnEditSnippet" />
+                        <MenuItem x:Name="EditHistoryMenu" Header="履歴を編集・整形…" InputGestureText="F2" Click="OnEditHistory" />
+                        <MenuItem Header="コピーのみ" InputGestureText="Ctrl+C" Click="OnCopyOnly" />
+                        <Separator /><MenuItem Header="削除" InputGestureText="Delete" Click="OnDelete" />
+                    </ContextMenu></ListBox.ContextMenu>
+                    <ListBox.ItemTemplate><DataTemplate>
+                        <Grid Margin="7,0,7,0" ToolTipService.InitialShowDelay="550" ToolTipService.ShowDuration="18000"><Grid.ColumnDefinitions><ColumnDefinition Width="25" /><ColumnDefinition Width="0" /><ColumnDefinition Width="*" /><ColumnDefinition Width="0" /></Grid.ColumnDefinitions>
+                            <Grid.ToolTip><ToolTip MaxWidth="470"><StackPanel><TextBlock Text="{Binding Meta}" Foreground="#708796" FontSize="10" Margin="0,0,0,5" /><TextBlock Text="{Binding ToolTipText}" TextWrapping="Wrap" MaxHeight="300" FontSize="12" /></StackPanel></ToolTip></Grid.ToolTip>
+                            <TextBlock Text="{Binding AccessKey, StringFormat={}{0}:}" Foreground="{StaticResource PopupMuted}" FontFamily="Consolas" FontSize="11" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{Binding KindGlyph}" FontFamily="Segoe MDL2 Assets" Foreground="#5B8998" FontSize="11" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="{Binding Title}" FontSize="12" Foreground="{StaticResource PopupInk}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="3" Text="{Binding ShortMeta}" Foreground="#879BA7" FontSize="10" TextTrimming="CharacterEllipsis" TextAlignment="Right" VerticalAlignment="Center" Margin="7,0,0,0" />
+                        </Grid>
+                    </DataTemplate></ListBox.ItemTemplate>
+                </ListBox>
+                <StackPanel x:Name="EmptyState" VerticalAlignment="Center" Margin="30"><TextBlock x:Name="EmptyHeading" Text="最初のコピーを待っています" FontSize="14" FontWeight="SemiBold" /><TextBlock x:Name="EmptyDetail" Foreground="#718896" FontSize="11" TextWrapping="Wrap" Margin="0,8,0,0" /></StackPanel>
+            </Grid>
+            <Grid Visibility="Collapsed" x:Name="PreviewPanel" Grid.Row="6" Margin="13,7,11,6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                <Grid><Grid.RowDefinitions><RowDefinition Height="19" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+                    <TextBlock x:Name="PreviewMeta" Foreground="#75909F" FontSize="10" TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="PreviewContent" Grid.Row="1" Foreground="#4D6C7F" FontSize="11" TextWrapping="Wrap" LineHeight="16" MaxHeight="32" TextTrimming="CharacterEllipsis" />
+                </Grid>
+                <StackPanel Grid.Column="1" Margin="11,0,0,0"></StackPanel>
+            </Grid>
+            <Border x:Name="NoticeBar" Visibility="Collapsed" Grid.Row="7" BorderBrush="{StaticResource PopupLine}" BorderThickness="0,1,0,0" Background="Transparent">
+                <Grid Margin="7,0,7,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                    <TextBlock x:Name="NoticeText" Text="↑↓ 選択   ←→ 切替   1–0 / A–Z で貼り付け" Foreground="#6A8697" FontSize="10" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                    <Button Visibility="Collapsed" x:Name="CopyButton" Grid.Column="1" Content="貼り付け ↵" Style="{StaticResource CompactButton}" Foreground="{StaticResource PopupInk}" Click="OnCopy" IsEnabled="False" ToolTip="選択した項目を取り出す  Enter" /><Button Visibility="Collapsed" x:Name="SettingsButton" Grid.Column="2" Content="設定" Style="{StaticResource CompactButton}" Click="OnSettings" /><Button Visibility="Collapsed" x:Name="PauseButton" Grid.Column="3" Content="共有中" Style="{StaticResource CompactButton}" FontSize="10" Foreground="#218078" Click="OnPause" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

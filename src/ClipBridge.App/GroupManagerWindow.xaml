@@ -1,0 +1,34 @@
+<Window x:Class="ClipBridge.App.GroupManagerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="グループ管理・並び替え" Width="760" Height="574" MinWidth="660" MinHeight="480"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="#F3F7FA" Foreground="#183B50"
+        FontFamily="Yu Gothic UI, Segoe UI" FontSize="12" UseLayoutRounding="True">
+    <Window.Resources><ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="Themes/Controls.xaml" /></ResourceDictionary.MergedDictionaries>
+        <Style x:Key="SmallButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="MinHeight" Value="30" /><Setter Property="Padding" Value="10,5" /><Setter Property="FontSize" Value="11" /></Style>
+        <Style TargetType="ListBoxItem"><Setter Property="Padding" Value="10,8" /><Setter Property="HorizontalContentAlignment" Value="Stretch" /></Style>
+    </ResourceDictionary></Window.Resources>
+    <Border Background="{StaticResource CanvasBrush}"><Grid Margin="22,20">
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <TextBlock Text="グループを整える" FontSize="21" FontWeight="SemiBold" />
+        <TextBlock Grid.Row="1" Text="定型文は「編集」・ダブルクリック・F2 で変更できます。グループと並び順も、もう一台に共有されます。" Foreground="#718896" FontSize="11" Margin="0,7,0,19" TextWrapping="Wrap" />
+        <Grid Grid.Row="2"><Grid.ColumnDefinitions><ColumnDefinition Width="245" /><ColumnDefinition Width="18" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+            <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                <DockPanel Margin="0,0,0,8"><TextBlock Text="グループ" FontWeight="SemiBold" VerticalAlignment="Center" /><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="↑" Style="{StaticResource SmallButton}" Padding="9,3" Click="OnGroupUp" AutomationProperties.Name="グループを上へ" /><Button Content="↓" Style="{StaticResource SmallButton}" Padding="9,3" Margin="5,0,0,0" Click="OnGroupDown" AutomationProperties.Name="グループを下へ" /></StackPanel></DockPanel>
+                <ListBox x:Name="GroupsList" Grid.Row="1" DisplayMemberPath="Name" BorderBrush="#DAE6ED" Background="White" SelectionChanged="OnGroupSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="管理するグループ一覧" />
+                <TextBox x:Name="GroupNameInput" Grid.Row="2" MaxLength="60" Margin="0,10,0,7" Padding="8,7" FontSize="12" AutomationProperties.Name="グループ名" ToolTip="60 文字以内のグループ名" />
+                <Grid Grid.Row="3"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <Button Content="新規作成" Style="{StaticResource SmallButton}" Click="OnAddGroup" Margin="0,0,5,0" /><Button Grid.Column="1" Content="名前変更" Style="{StaticResource SmallButton}" Click="OnRenameGroup" Margin="0,0,5,0" /><Button Grid.Column="2" Content="削除" Style="{StaticResource SmallButton}" Click="OnDeleteGroup" />
+                </Grid>
+            </Grid>
+            <Grid Grid.Column="2"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                <DockPanel Margin="0,0,0,8"><TextBlock x:Name="SnippetsHeading" Text="定型文" FontWeight="SemiBold" VerticalAlignment="Center" /><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button x:Name="EditSnippetButton" Content="編集" Style="{StaticResource SmallButton}" Margin="0,0,7,0" Click="OnEditSnippet" IsEnabled="False" ToolTip="タイトル・本文・グループを編集  F2" AutomationProperties.Name="選択した定型文を編集" /><Button Content="↑" Style="{StaticResource SmallButton}" Padding="9,3" Click="OnSnippetUp" AutomationProperties.Name="定型文を上へ" /><Button Content="↓" Style="{StaticResource SmallButton}" Padding="9,3" Margin="5,0,0,0" Click="OnSnippetDown" AutomationProperties.Name="定型文を下へ" /></StackPanel></DockPanel>
+                <Grid Grid.Row="1"><ListBox x:Name="SnippetsList" BorderBrush="#DAE6ED" Background="White" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="OnSnippetSelected" MouseDoubleClick="OnSnippetDoubleClick" AutomationProperties.Name="グループ内の定型文一覧"><ListBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" /><TextBlock Text="{Binding Text}" TextTrimming="CharacterEllipsis" Foreground="#79909F" FontSize="10" MaxHeight="17" Margin="0,3,0,0" /></StackPanel></DataTemplate></ListBox.ItemTemplate></ListBox><TextBlock x:Name="NoSnippetsText" Text="このグループには定型文がありません" Foreground="#79909F" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" /></Grid>
+                <TextBlock Grid.Row="2" x:Name="SnippetDetailText" Text="定型文を選ぶと、別のグループへ移動できます。" Foreground="#718896" FontSize="10" Margin="0,10,0,7" TextWrapping="Wrap" MinHeight="33" MaxHeight="33" />
+                <DockPanel Grid.Row="3"><Button x:Name="MoveSnippetButton" DockPanel.Dock="Right" Content="移動する" Style="{StaticResource SmallButton}" Margin="8,0,0,0" Click="OnMoveSnippet" /><ComboBox x:Name="MoveGroupInput" DisplayMemberPath="Name" MinHeight="30" AutomationProperties.Name="定型文の移動先グループ" /></DockPanel>
+            </Grid>
+        </Grid>
+        <TextBlock Grid.Row="3" x:Name="StatusText" Foreground="#718896" FontSize="11" Margin="0,12,0,0" TextWrapping="Wrap" MinHeight="30" Text="グループを削除すると、その中の定型文は「共通」へ移動します。" />
+        <Grid Grid.Row="4" Margin="0,9,0,0"><TextBlock Text="保存するまで変更は確定しません。" Foreground="#718896" FontSize="10" VerticalAlignment="Center" /><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="キャンセル" IsCancel="True" Margin="0,0,8,0" MinHeight="33" Padding="13,6" FontSize="12" /><Button Content="変更を保存" Style="{StaticResource PrimaryButton}" Click="OnSave" MinHeight="33" Padding="17,6" FontSize="12" /></StackPanel></Grid>
+    </Grid></Border>
+</Window>
